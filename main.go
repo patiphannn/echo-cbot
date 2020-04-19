@@ -34,13 +34,27 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
+	// Auth
 	{
-		// Auth
 		auth := new(controllers.Auth)
 		g := e.Group("/auth")
 		{
 			g.POST("/signup", auth.Signup)
 			g.POST("/signin", auth.Signin)
+		}
+	}
+
+	// Project
+	{
+		project := new(controllers.Project)
+		g := e.Group("/project")
+		g.Use(middleware.JWT([]byte("secret")))
+		{
+			g.GET("", project.Gets)
+			g.GET("/:id", project.Get)
+			g.POST("", project.Create)
+			g.PUT("/:id", project.Update)
+			g.DELETE("/:id", project.Delete)
 		}
 	}
 

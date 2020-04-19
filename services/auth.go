@@ -6,6 +6,7 @@ import (
 
 	"github.com/Kamva/mgm/v2"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo/v4"
 	"github.com/polnoy/echo-cbot/common"
 	"github.com/polnoy/echo-cbot/models"
 	"gopkg.in/mgo.v2/bson"
@@ -24,6 +25,7 @@ func createToken(user *models.User) (string, error) {
 	claims["name"] = user.Name
 	claims["email"] = user.Email
 	claims["admin"] = user.Admin
+	claims["type"] = "user"
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	// Generate encoded token and send it as response.
@@ -35,10 +37,18 @@ func createToken(user *models.User) (string, error) {
 	return t, nil
 }
 
+// GetProfile handler get user profile.
+func GetProfile(c echo.Context) jwt.MapClaims {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+
+	return claims
+}
+
 // Signup defined signup user
 func (h *Auth) Signup(form *models.Signup) (*models.User, error) {
 	user := &models.User{}
-	if err := mgm.Coll(user).First(bson.M{"email": form.Email}, user); err != nil {
+	if err := mgm.Coll(user).First(bson.M{"email": form.Email}, user); err != nil && err.Error() != "mongo: no documents in result" {
 		return nil, err
 	}
 
