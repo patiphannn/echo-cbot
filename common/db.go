@@ -2,11 +2,11 @@ package common
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/Kamva/mgm/v2"
 	"github.com/polnoy/echo-cbot/models"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
@@ -16,12 +16,12 @@ import (
 func ConnectDb() error {
 	defer createIndex()
 
-	mongo := os.Getenv("MONGO_HOST")
+	mongo := viper.GetString("mongo_host")
 	if mongo == "" {
 		mongo = "mongodb://localhost:27017"
 	}
 
-	db := os.Getenv("MONGO_DB_NAME")
+	db := viper.GetString("mongo_db")
 	if db == "" {
 		db = "echo-cbot"
 	}

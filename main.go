@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/polnoy/echo-cbot/common"
 	"github.com/polnoy/echo-cbot/controllers"
+	"github.com/spf13/viper"
 )
 
 // CustomValidator validator struct
@@ -48,7 +49,7 @@ func main() {
 	{
 		project := new(controllers.Project)
 		g := e.Group("/project")
-		g.Use(middleware.JWT([]byte("secret")))
+		g.Use(middleware.JWT([]byte(viper.GetString("access_key"))))
 		{
 			g.GET("", project.Gets)
 			g.GET("/:id", project.Get)

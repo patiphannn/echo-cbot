@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/polnoy/echo-cbot/common"
 	"github.com/polnoy/echo-cbot/models"
+	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -29,7 +30,7 @@ func createToken(user *models.User) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	t, err := token.SignedString([]byte(viper.GetString("access_key")))
 	if err != nil {
 		return "", err
 	}

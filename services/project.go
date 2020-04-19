@@ -6,6 +6,7 @@ import (
 	"github.com/Kamva/mgm/v2"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/polnoy/echo-cbot/models"
+	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -24,7 +25,7 @@ func createKey(project *models.Project) (string, error) {
 	claims["exp"] = time.Now().Add(0).Unix()
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	t, err := token.SignedString([]byte(viper.GetString("access_key")))
 	if err != nil {
 		return "", err
 	}
