@@ -32,7 +32,7 @@ func (h *Auth) Signup(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, data)
+	return c.JSON(http.StatusOK, data)
 }
 
 // Signin handler sigin user.
@@ -54,5 +54,5 @@ func (h *Auth) Signin(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, data)
+	return c.JSON(http.StatusOK, data)
 }

@@ -59,6 +59,20 @@ func main() {
 		}
 	}
 
+	// Intent
+	{
+		intent := new(controllers.Intent)
+		g := e.Group("/intent")
+		g.Use(middleware.JWT([]byte(viper.GetString("access_key"))))
+		{
+			g.GET("", intent.Gets)
+			g.GET("/:id", intent.Get)
+			g.POST("", intent.Create)
+			g.PUT("/:id", intent.Update)
+			g.DELETE("/:id", intent.Delete)
+		}
+	}
+
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
