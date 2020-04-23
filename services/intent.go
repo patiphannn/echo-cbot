@@ -1,11 +1,10 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/Kamva/mgm/v2"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/polnoy/echo-cbot/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -34,10 +33,9 @@ func (h *Intent) Get(cond bson.M) (*models.Intent, error) {
 
 // Create defined create new intent.
 func (h *Intent) Create(form *models.Intent, profile jwt.MapClaims) (*models.Intent, error) {
-	projectID := profile["_id"].(string)
-	fmt.Println("projectID: ", projectID)
+	projID, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
-	form.Project = projectID
+	form.Project = projID
 	if err := mgm.Coll(form).Create(form); err != nil {
 		return nil, err
 	}

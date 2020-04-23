@@ -48,7 +48,7 @@ func main() {
 	// Project
 	{
 		project := new(controllers.Project)
-		g := e.Group("/project")
+		g := e.Group("/projects")
 		g.Use(middleware.JWT([]byte(viper.GetString("access_key"))))
 		{
 			g.GET("", project.Gets)
@@ -62,7 +62,7 @@ func main() {
 	// Intent
 	{
 		intent := new(controllers.Intent)
-		g := e.Group("/intent")
+		g := e.Group("/intents")
 		g.Use(middleware.JWT([]byte(viper.GetString("access_key"))))
 		{
 			g.GET("", intent.Gets)
@@ -70,6 +70,16 @@ func main() {
 			g.POST("", intent.Create)
 			g.PUT("/:id", intent.Update)
 			g.DELETE("/:id", intent.Delete)
+		}
+	}
+
+	// Reponse
+	{
+		response := new(controllers.Response)
+		g := e.Group("/reponses")
+		g.Use(middleware.JWT([]byte(viper.GetString("access_key"))))
+		{
+			g.POST("", response.Answer)
 		}
 	}
 

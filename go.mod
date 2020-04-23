@@ -5,6 +5,8 @@ go 1.14
 require (
 	github.com/Kamva/mgm v1.2.3
 	github.com/Kamva/mgm/v2 v2.0.0
+	github.com/blevesearch/bleve v1.0.7 // indirect
+	github.com/cdipaolo/goml v0.0.0-20190412180403-e1f51f713598
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
@@ -12,6 +14,7 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/leodido/go-urn v1.2.0 // indirect
+	github.com/lytics/multibayes v0.0.0-20161108162840-3457a5582021
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/viper v1.6.3
 	github.com/stretchr/testify v1.5.1 // indirect
@@ -20,6 +23,7 @@ require (
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
 	golang.org/x/sys v0.0.0-20200413165638-669c56c373c4 // indirect
+	golang.org/x/text v0.3.2
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
