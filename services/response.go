@@ -10,6 +10,7 @@ import (
 	"github.com/cdipaolo/goml/base"
 	naivebaye "github.com/cdipaolo/goml/text"
 	"github.com/dgrijalva/jwt-go"
+	gothaiwordcut "github.com/narongdejsrn/go-thaiwordcut"
 	"github.com/polnoy/echo-cbot/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -77,6 +78,8 @@ func (h *Response) bot(id string, form *models.Response) (*models.Bot, error) {
 }
 
 func (h *Response) naiveBaye(text string, bot *models.Bot) (uint8, float64, error) {
+	segmenter := gothaiwordcut.Wordcut()
+	segmenter.LoadDefaultDict()
 	// create the channel of data and errors
 	stream := make(chan base.TextDatapoint, 100)
 	errors := make(chan error)
@@ -88,11 +91,17 @@ func (h *Response) naiveBaye(text string, bot *models.Bot) (uint8, float64, erro
 
 	for kintent, intent := range bot.Intents {
 		questions := intent.Question
-		str := fmt.Sprintf("%v", questions)
+		fmt.Println("questions: ", kintent, questions)
 
-		stream <- base.TextDatapoint{
-			X: str,
-			Y: uint8(kintent),
+		for _, question := range questions {
+			wcut := segmenter.Segment(question)
+			str := fmt.Sprintf("%v", wcut)
+			fmt.Println("question: ", kintent, str)
+
+			stream <- base.TextDatapoint{
+				X: str,
+				Y: uint8(kintent),
+			}
 		}
 	}
 
@@ -109,7 +118,10 @@ func (h *Response) naiveBaye(text string, bot *models.Bot) (uint8, float64, erro
 	}
 
 	// now you can predict like normal
-	index, score := model.Probability(text) // 0
+	wcut := segmenter.Segment(text)
+	str := fmt.Sprintf("%v", wcut)
+	fmt.Println("text form: ", str)
+	index, score := model.Probability(str) // 0
 	return index, score, nil
 }
 
@@ -138,7 +150,7 @@ func (h *Response) Answer(form *models.Response, profile jwt.MapClaims) (*models
 	fmt.Println("score: ", score)
 
 	var answer = ""
-	if score > float64(0.38) {
+	if score > float64(0.5) {
 		// match
 		answer = h.randomAnswer(int(index), bot)
 	} else {
