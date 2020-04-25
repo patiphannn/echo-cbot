@@ -1,3 +1,4 @@
 access_key: AKKEYCBOTNUIIPP
 mongo_host: mongodb://localhost:27017
 mongo_db: echo-cbot
+seed: false

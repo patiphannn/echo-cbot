@@ -18,8 +18,9 @@ type Project struct {
 func (h *Project) Gets(c echo.Context) (err error) {
 	service := new(services.Project)
 	profile := services.GetProfile(c)
+	user, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
-	result, err := service.Gets(bson.M{"user":profile["_id"].(string)})
+	result, err := service.Gets(bson.M{"user": user})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
@@ -29,11 +30,12 @@ func (h *Project) Gets(c echo.Context) (err error) {
 
 // Get defined find once project.
 func (h *Project) Get(c echo.Context) (err error) {
-	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
 	service := new(services.Project)
 	profile := services.GetProfile(c)
+	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
+	user, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
-	result, err := service.Get(bson.M{"_id":id,"user":profile["_id"].(string)})
+	result, err := service.Get(bson.M{"_id": id, "user": user})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
@@ -45,6 +47,7 @@ func (h *Project) Get(c echo.Context) (err error) {
 func (h *Project) Create(c echo.Context) (err error) {
 	service := new(services.Project)
 	profile := services.GetProfile(c)
+	user, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
 	form := &models.Project{}
 	// skip checking bind errors.
@@ -57,7 +60,8 @@ func (h *Project) Create(c echo.Context) (err error) {
 		return c.JSON(http.StatusInternalServerError, bson.M{"message": err.Error()})
 	}
 
-	result, err := service.Create(form, profile)
+	form.User = user
+	result, err := service.Create(form)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
@@ -67,9 +71,10 @@ func (h *Project) Create(c echo.Context) (err error) {
 
 // Update handler update project.
 func (h *Project) Update(c echo.Context) (err error) {
-	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
 	service := new(services.Project)
 	profile := services.GetProfile(c)
+	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
+	user, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
 	form := &models.RProject{}
 	// skip checking bind errors.
@@ -82,7 +87,7 @@ func (h *Project) Update(c echo.Context) (err error) {
 		return c.JSON(http.StatusInternalServerError, bson.M{"message": err.Error()})
 	}
 
-	result, err := service.Update(bson.M{"_id":id,"user":profile["_id"].(string)}, form)
+	result, err := service.Update(bson.M{"_id": id, "user": user}, form)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
@@ -92,11 +97,12 @@ func (h *Project) Update(c echo.Context) (err error) {
 
 // Delete handler delete project.
 func (h *Project) Delete(c echo.Context) error {
-	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
 	service := new(services.Project)
 	profile := services.GetProfile(c)
+	id, _ := primitive.ObjectIDFromHex(c.Param("id"))
+	user, _ := primitive.ObjectIDFromHex(profile["_id"].(string))
 
-	if err := service.Delete(bson.M{"_id":id,"user":profile["_id"].(string)}); err != nil {
+	if err := service.Delete(bson.M{"_id": id, "user": user}); err != nil {
 		return c.JSON(http.StatusBadRequest, bson.M{"message": err.Error()})
 	}
 

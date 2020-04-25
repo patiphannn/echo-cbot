@@ -2,33 +2,13 @@ package services
 
 import (
 	"github.com/Kamva/mgm/v2"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/polnoy/echo-cbot/common"
 	"github.com/polnoy/echo-cbot/models"
-	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2/bson"
 )
 
 // Project is all project services
 type Project struct{}
-
-func createKey(project *models.Project) (string, error) {
-	// Create token
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["_id"] = project.ID.Hex()
-	claims["name"] = project.Name
-	claims["type"] = "project"
-
-	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte(viper.GetString("access_key")))
-	if err != nil {
-		return "", err
-	}
-
-	return t, nil
-}
 
 // Gets defined find all project.
 func (h *Project) Gets(cond bson.M) ([]models.Project, error) {
@@ -51,16 +31,13 @@ func (h *Project) Get(cond bson.M) (*models.Project, error) {
 }
 
 // Create defined create new project.
-func (h *Project) Create(form *models.Project, profile jwt.MapClaims) (*models.Project, error) {
-	userID := profile["_id"].(string)
+func (h *Project) Create(form *models.Project) (*models.Project, error) {
 	coll := mgm.Coll(form)
-
-	form.User = userID
 	if err := coll.Create(form); err != nil {
 		return nil, err
 	}
 
-	key, err := createKey(form)
+	key, err := common.CreateKey(form)
 	if err != nil {
 		return nil, err
 	}
