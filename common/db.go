@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/Kamva/mgm/v2"
@@ -14,20 +15,42 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+func mongoHost() string {
+	mongo := os.Getenv("MONGO_HOST")
+	if mongo != "" {
+		return mongo
+	}
+
+	mongoV := viper.GetString("mongo_host")
+	if mongoV != "" {
+		return mongoV
+	}
+
+	return "mongodb://localhost:27017"
+}
+
+func mongoDB() string {
+	mongo := os.Getenv("MONGO_DB_NAME")
+	if mongo != "" {
+		return mongo
+	}
+
+	mongoV := viper.GetString("mongo_db")
+	if mongoV != "" {
+		return mongoV
+	}
+
+	return "mongodb://localhost:27017"
+}
+
 // ConnectDb is connect mongodb database
 func ConnectDb() error {
 	defer createIndex()
 	defer seed()
 
-	mongo := viper.GetString("mongo_host")
-	if mongo == "" {
-		mongo = "mongodb://localhost:27017"
-	}
+	mongo := mongoHost()
 
-	db := viper.GetString("mongo_db")
-	if db == "" {
-		db = "echo-cbot"
-	}
+	db := mongoDB()
 
 	//  _ = mgm.SetDefaultConfig(&mgm.Config{CtxTimeout: 12 * time.Second}, "go-book", options.Client().ApplyURI("mongodb://root:12345@localhost:27017"))
 	err := mgm.SetDefaultConfig(&mgm.Config{CtxTimeout: 12 * time.Second}, db, options.Client().ApplyURI(mongo))
