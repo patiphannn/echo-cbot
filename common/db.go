@@ -111,6 +111,10 @@ func seed() error {
 }
 
 func userSeed() (*models.User, error) {
+	// Drop User Collection
+	mgm.CollectionByName("users").Drop(mgm.Ctx())
+
+	// Create User
 	password, err := GeneratePasswordHash([]byte("adminbot"))
 	if err != nil {
 		return nil, err
@@ -132,6 +136,10 @@ func userSeed() (*models.User, error) {
 }
 
 func projectSeed(userID primitive.ObjectID) (*models.Project, error) {
+	// Drop Project Collection
+	mgm.CollectionByName("projects").Drop(mgm.Ctx())
+
+	// Create Project
 	project := &models.Project{
 		Name:        "cBot",
 		Fulfillment: "",
@@ -156,6 +164,10 @@ func projectSeed(userID primitive.ObjectID) (*models.Project, error) {
 }
 
 func intentSeed(projID primitive.ObjectID) error {
+	// Drop Intent Collection
+	mgm.CollectionByName("intents").Drop(mgm.Ctx())
+
+	// Create Intent
 	// Fallback
 	{
 		question := []string{}
